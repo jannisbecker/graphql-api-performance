@@ -4,9 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "database:import": "ts-node scripts/db-import-data.ts"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^6.5.0",
+    "sequelize-typescript": "^2.1.0",
+    "typescript": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/ndjson": "^2.0.0",
+    "@types/node": "^14.14.31",
+    "@types/sequelize": "^4.28.9",
+    "@types/validator": "^13.1.3",
+    "ndjson": "^2.0.0",
+    "ts-node": "^9.1.1"
+  }
 }
