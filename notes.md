@@ -101,3 +101,37 @@
     Auch bei üblichen Anwendungsfällen der Offset-basierten Paginierung kann das natürlich von Vorteil sein, wenn Einträge von Seite N bei Aufruf der Seite N+1 nicht erneut angezeigt werden. Zudem ist die Cursor-basierte Pagination deutlich performanter, was ich in dieser Arbeit aufzeigen möchte.
     Das Ziel sei es also, einen Ansatz zu erarbeiten der es ermöglicht, die Cursor-basierte Pagination in eine Anwendung zu integrieren, welche Seitenzahlen erfordert,
     um die bestmögliche Performance und Fehlertoleranz für diesen Anwendungsfall zu erhalten.
+
+# 20.5.2021
+
+- Literatur "Evaluating execution strategies of GraphQL queries":
+
+  - Es wird eine komplexere Datenstruktur und ein GraphQL Schema benötigt, welches N+1 Probleme zulässt (Tiefe >= 2). u.U. wird daher die Verwendung einer komplexeren Datenquelle nötig, oder einige Metadaten eines einzelnen
+    Produktes, z.B. die Kategorie, könnte ein eigenes Schema Objekt darstellen und in der Datenbank in einer eigenen Tabelle gespeichert werden. Ich vermute, dass dies auch das realistischere Szenario darstellt.
+
+  - Tests sollten mit unterschiedlichen _limit_ Werten durchgeführt werden, um die Korrelation zwischen den implementierten Optimierungen und der Anzahl der in der API Anfrage zurückgegebenen Datensätze herauszustellen.
+    Sollte die Korrelation in jedem Test linear mit dem _limit_ Wert erfolgen, so gibt es keinen Zusammenhang, bzw. keine der Optimierungen hat einen positiven Einfluss auf die Peformance bei unterschiedlichen Antwortgrößen.
+  - In der Ergebnisanalyse könnten die Ergebnisse dann folgendermaßen dargestellt werden:
+
+    - Optimierungskategorie:
+
+      - Ohne Optimierung, Naiver Ansatz
+      - Paginierungs Optimierung
+      - N+1 Optimierung
+      - Beide Optimierungen
+
+    - Barchart Antwortzeit nach Optimierungsansatz: Optimierungsstrategie auf X-Achse, Zeit (avg, min, max) auf Y-Achse
+
+    - Linechart Korrelation zwischen Antwortzeit und Antwortgröße (Elemente pro Seite, _limit_): _limit_ Wert auf X-Achse, Zeit avg auf Y-Achse, Linie pro Optimierungskategorie
+
+  - Implementierung N+1 Optimierung
+
+    - Ich denke, ich muss keinen Vergleich mehr zwischen verschiedenen Ansätzen ziehen, da diese Referenz bereits den Vorteil von batched+cached Strategien herausgestellt hat.
+      Für die Pagination ist ein Cachen innerhalb eines einzelnen Requests nicht von Vorteil, da dieselben Datensätze nicht mehrfach abgerufen werden.
+      Caching könnte aber über mehrere Queries hinweg von Vorteil sein, da einerseits ein Nutzer auf bereits besuchte Seiten zurückspringen, zweitens eine Sortierung wählen könnte,
+      die ein bereits gesehenes Produkt ebenfalls enthält, und drittens mehrere Nutzer gleichzeitig eine Schnittmenge von Produkten anschauen könnte. Insbesondere im letzten Fall sei Caching
+      vermutlich von großem Vorteil, und könnte untersucht werden.
+
+    - Ich sollte also einen batching Ansatz (aka Dataloader) implementieren, durch einen globalen Cache (z.B. Redis?) unterstützt, sofern möglich.
+
+Arbeit für Morgen: Datenstruktur in Datenbank überlegen, schauen, was das Dataset noch an Infos hergibt, und notfalls ein anderes suchen.
