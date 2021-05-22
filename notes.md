@@ -135,3 +135,29 @@
     - Ich sollte also einen batching Ansatz (aka Dataloader) implementieren, durch einen globalen Cache (z.B. Redis?) unterstützt, sofern möglich.
 
 Arbeit für Morgen: Datenstruktur in Datenbank überlegen, schauen, was das Dataset noch an Infos hergibt, und notfalls ein anderes suchen.
+
+# 21.5.2021
+
+- Überlegungen zur Datenstruktur: Ich werde eine Many-To-Many Relation zwischen Produkten und Kategorien erstellen, damit ich durch diese Assoziation das N+1 Problem aufzeigen kann.
+- Leider gestaltete sich die Implementierung im Daten Import Skript als schwierig:
+
+  - Jedes Produkt hat ein String Array von Kategorien. Diese sind natürlich nicht einzigartig für jedes Produkt, sondern sehr häufig haben viele Produkte dieselbe Kategorie gemein.
+    In der Datenbank müssen die Kategorien jedoch einzeln vorhanden sein. D.h. ich kann nicht einfach bei jedem Produkt für jede Kategorie im Array einen Eintrag in der Datenbank erstellen,
+    sondern ich muss bei jedem Produkt zu jeder Kategorie überprüfen, ob diese bereits in der Datenbank vorhanden ist, und sie sonst erstellen.
+    Das führte zu N*(2*M) Queries (N: Anzahl der Produkte ~500.000, M: durchschn. Anzahl der Kategorien pro Produkt: ~4), und der Overhead durch das ORM sei auch nicht zu vernachlässigen.
+    Die Geschwindigkeit des Imports nicht das Problem, sondern daraus folgende Timeout oder Verbindungsfehler der Datenbank.
+    Hier ist die Idee, die Queries entweder durch Batching oder Caching zu reduzieren. Ich entschied mich als erste Maßnahme zum Caching.
+
+  - Durch das Caching der bereits erstellten Kategorie Einträge wurden jegliche Select Queries für die Kategorien verhindert.
+    Das Skript konnte nun lokal in einer Map (Key: Kategorie Name, Value: ORM Entity der Kategorie) nachschauen, ob die Kategorie schon erstellt wurde anstelle mittels Query in der Datenbank zu suchen,
+    und musste nur einen Insert ausführen, wenn die Kategorie noch nicht in der Map vorhanden war.
+    Dadurch habe ich maximal N*M Queries, wenn jede Kategorie in jedem Produkt eindeutig wäre.
+    Da sich die Kategorien jedes Produkts aber mit zahllosen anderen Produkten überschneidet, beschränkt sich die Anzahl der Queries auf N+P, wobei P: Gesamtzahl der unterschiedlichen Kategorien,
+    und N+P ist deutlich kleiner als N*M
+
+  - Als neueste Erkenntnis habe ich gesehen, dass man mit externen Tools wie z.B. Datagrip Daten in die Datenbank mittels CSV o.Ä. Dateien durchführen kann.
+    Sofern ich es also schaffe, mit dem Skript die Daten so aufzubereiten dass
+    1. Ich eine CSV Datei für jede zu erstellende Tabelle erhalte, und
+    2. Die CSV Dateien bereits die assozierten IDs / Foreign Keys enthalten
+       kann ich die Daten sehr effizient importieren. Gleichzeitig muss ich die Daten nicht jedes Mal erneut aufbereiten, wenn die Datenbank z.B. gelöscht werden muss,
+       sondern kann einfach die CSV Dateien erneut einlesen.

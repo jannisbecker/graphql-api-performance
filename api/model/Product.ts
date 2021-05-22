@@ -1,18 +1,30 @@
-import { Column, Model, Table } from "sequelize-typescript";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
+import { Category } from "./Category";
 
-@Table({
-  timestamps: false,
-})
-export class Product extends Model {
-  @Column
-  title?: string;
+@Entity()
+export class Product {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-  @Column
-  brand?: string;
+  @Column()
+  name!: string;
 
-  @Column
-  price?: string;
+  @Column()
+  brand!: string;
 
-  @Column
-  image_url?: string;
+  @Column()
+  price!: string;
+
+  @Column()
+  image_url!: string;
+
+  @ManyToMany(() => Category)
+  @JoinTable()
+  categories!: Category[];
 }

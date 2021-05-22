@@ -1,23 +1,24 @@
 import fs from "fs";
 import ndjson from "ndjson";
-import { Sequelize } from "sequelize-typescript";
+import { createConnection } from "typeorm";
+import { Category } from "../model/Category";
 import { Product } from "../model/Product";
-import { options } from "../sequelize.config";
 
-async function importData(): Promise<void> {
-  // Create new Sequelize instance with database settings
-  const sequelize = new Sequelize({
-    ...options,
-    dialectOptions: {
-      connectTimeout: 1000000,
-    },
-  });
+type Record = {
+  title: string;
+  brand: string;
+  image: string[];
+  price: string;
+  category?: string[];
+};
 
-  // Test if Sequelize connection works
-  await sequelize.authenticate().catch((error) => {
-    console.error("Unable to connect to the database:", error);
-    process.exit(1);
-  });
+// Cache for created categories, so that we don't have to query each category for each product->category association
+const categoryMap = new Map<string, Category>();
+
+(async () => {
+  const connection = await createConnection();
+  const productRepository = connection.getRepository(Product);
+  const categoryRepository = connection.getRepository(Category);
 
   // Create data stream from data.json file using ndjson stream parser
   const pipeline = fs.createReadStream("data.json").pipe(ndjson.parse());
@@ -25,22 +26,37 @@ async function importData(): Promise<void> {
   // Count number of imported products
   let importCount = 0;
 
-  // Create and import new Product whenever a new json object is streamed in
-  pipeline.on("data", async (data) => {
-    if (!data.title || !data.image[0] || !data.price.startsWith("$")) return;
+  pipeline.on("data", async (entry: Record) => {
+    if (!entry.title || !entry.image[0] || !entry.price.startsWith("$")) return;
 
-    Product.create({
-      title: data.title,
-      brand: data.brand,
-      price: data.price,
-      image_url: data.image[0],
-    }).catch((error) => {
-      console.error(error);
-      process.exit(1);
+    const categories = entry.category
+      ? await Promise.all(
+          entry.category.map(async (name) => {
+            const cached = categoryMap.get(name);
+
+            if (cached) {
+              return cached;
+            } else {
+              const category = await categoryRepository.save({
+                name,
+              });
+
+              categoryMap.set(name, category);
+
+              return category;
+            }
+          })
+        )
+      : [];
+
+    const product = await productRepository.save({
+      name: entry.title,
+      brand: entry.brand,
+      price: entry.price,
+      image_url: entry.image[0],
+      categories,
     });
 
-    console.log("Imported " + ++importCount + " products.");
+    console.log(`Imported ${++importCount} entries`);
   });
-}
-
-(async () => await importData())();
+})();
