@@ -175,3 +175,13 @@ Arbeit für Morgen: Datenstruktur in Datenbank überlegen, schauen, was das Data
     2. Die CSV Dateien bereits die assozierten IDs / Foreign Keys enthalten
        kann ich die Daten sehr effizient importieren. Gleichzeitig muss ich die Daten nicht jedes Mal erneut aufbereiten, wenn die Datenbank z.B. gelöscht werden muss,
        sondern kann einfach die CSV Dateien erneut einlesen.
+
+# 24.5.2021
+
+- Einige Anpassungen für das Datenhandling:
+
+  - Auf Datenstruktur und HighRes Images vom 2018er Datensatz geupdatet
+  - ID "0" wurde immer als noch nicht vorhanden gehandhabt, gefixt
+  - SQL zum erstellen der Tabellen hinzugefügt
+
+- Aufgabe für Morgen: Gliederung genauer formulieren, mit Einbeziehung der geforderten Inhalte (https://www.scribbr.de/anfang-abschlussarbeit/bachelorarbeit-schreiben/)
