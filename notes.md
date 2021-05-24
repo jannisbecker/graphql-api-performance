@@ -138,6 +138,20 @@ Arbeit für Morgen: Datenstruktur in Datenbank überlegen, schauen, was das Data
 
 # 21.5.2021
 
+- Es muss auf jeden Fall eine Datenstruktur in der Datenbank verwendet werden, die das N+1 Problem aufzeigt, und mit der sich das Problem gut beschreiben lässt.
+  Theoretisch sollten alle Arten von Relationen das Problem hervorrufen.
+  Man könnte meinen, dass man die Queries ja auch so schreiben kann, dass Relationen innerhalb eines einzelnen Queries abgefragt werden.
+  Da GraphQL jedoch festlegt, dass Resolver pro Field definiert werden (da GraphQL Anfragen sonst nicht so flexibel, sprich mit beliebigen angefragten Feldern gestaltet werden könnten),
+  kann ein Resolver eines Elternobjekts nicht die Felder des Kindobjekts mit auflösen - und dadurch analog kein einzelner Query für sowohl Eltern- als auch Kindobjekt gestellt werden.
+  In den meisten Fällen besitzt das Elternobjekt in der Datenbank entweder (1) eine ID die es selbst eindeutig identifiziert, oder (2) eine ID die eine Relation mit einer anderen Tabelle kennzeichnet.
+  Es sei eine GraphQL Anfrage gestellt worden, welche eine Liste von Elternobjekten mitsamt Informationen zu jedem zugehörigen Kindobjekt abrufen soll.
+  In einem ersten Query wird die Liste der Elternobjekte aufgelöst. In den dadurch von der Datenbank gestellten Daten liegt der Primary Key (1) und/oder der Foreign Key (2) entsprechend vor.
+  Da wir nun eine Liste der IDs haben, für welche die Kindobjekte **aller** abgerufenen Elternobjekte identifiziert werden können, kann nun, anstelle eines Queries zu jedem einzelnen Kindobjekt (N+1 Problem),
+  stattdessen ein Query generiert werden, der **alle** Kindobjekt Datensätze zurückgibt, die für die GraphQL Antwort benötigt werden.
+  Nun muss in einem letzten Schritt nur noch die Zuordnung der zurückgegebenen Kindobjekte zu den jeweiligen Elternobjekten geschehen.
+
+# 22.5.2021
+
 - Überlegungen zur Datenstruktur: Ich werde eine Many-To-Many Relation zwischen Produkten und Kategorien erstellen, damit ich durch diese Assoziation das N+1 Problem aufzeigen kann.
 - Leider gestaltete sich die Implementierung im Daten Import Skript als schwierig:
 
