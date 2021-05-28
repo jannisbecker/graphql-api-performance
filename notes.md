@@ -185,3 +185,16 @@ Arbeit für Morgen: Datenstruktur in Datenbank überlegen, schauen, was das Data
   - SQL zum erstellen der Tabellen hinzugefügt
 
 - Aufgabe für Morgen: Gliederung genauer formulieren, mit Einbeziehung der geforderten Inhalte (https://www.scribbr.de/anfang-abschlussarbeit/bachelorarbeit-schreiben/)
+
+# 28.5.2021
+
+- Gliederung überarbeitet und fertig detailliert beschrieben :>
+
+- Idee verworfen, mit Docker das Projekt aufzusetzen - unnötiger Mehraufwand, lenkt von eigentlicher Implementierung ab
+  -> Stattdessen lieber Postgres Datenbank und Redis Cache einzeln installieren und höchstens per env konfigugierbar machen
+
+- Ich sollte direkt anfangen zu schreiben, da die Struktur und die Themen pro Kapitel nun klar sind. Formatierung ist erstmal weniger relevant. Ansonsten geht mir aber die Zeit aus.
+
+- Typeorm sollte eigentlich alles können, was ich für meine Tests brauche, und notfalls können Queries manuell gebaut werden.
+
+- Ich habe die Scripts nochmal in einen eigenen Ordner verschoben und aufgeräumt.

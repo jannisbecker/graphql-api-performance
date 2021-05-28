@@ -36,27 +36,29 @@ type ProductCategory = {
 };
 
 const dataStream = fs
-  .createReadStream(__dirname + "/data.json")
+  .createReadStream(__dirname + "/in/data.json")
   .pipe(ndjson.parse());
 
 const productWriter = stringify({
   header: true,
   columns: ["id", "title", "brand", "image_url", "price"],
 });
-productWriter.pipe(fs.createWriteStream(__dirname + "/data_products.csv"));
+productWriter.pipe(fs.createWriteStream(__dirname + "/out/data_products.csv"));
 
 const categoryWriter = stringify({
   header: true,
   columns: ["id", "name"],
 });
-categoryWriter.pipe(fs.createWriteStream(__dirname + "/data_categories.csv"));
+categoryWriter.pipe(
+  fs.createWriteStream(__dirname + "/out/data_categories.csv")
+);
 
 const productCategoryWriter = stringify({
   header: true,
   columns: ["productId", "categoryId"],
 });
 productCategoryWriter.pipe(
-  fs.createWriteStream(__dirname + "/data_product_categories.csv")
+  fs.createWriteStream(__dirname + "/out/data_product_categories.csv")
 );
 
 // Store all found categories. We'll use a map for this as we need immediate access to added category IDs in following product iterations
