@@ -8,7 +8,10 @@
 
 - Hauptteil
 
-  - GraphQL Einführung
+  - GraphQL Einführung (t.b.d)
+    -> Was ist GraphQL, wo wird es verwendet?
+    -> Vor/Nachteile von GraphQL über REST oder Falcor
+    -> Wie sind Queries strukturiert, wie werden sie verarbeitet?
 
   - Pagination in GraphQL APIs
 
@@ -31,7 +34,6 @@
   - N+1 Problem in GraphQL APIs
 
     - Einführung (Theoretischer Teil)
-      -> Einführung in die Query Verarbeitung von GraphQL
       -> N+1 Problem Definition und Gründe für das Auftreten (z.B. Feld-weise Verarbeitung des Queries)
       -> Vorstellung aktueller Kenntnisse
 
