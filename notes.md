@@ -198,3 +198,24 @@ Arbeit für Morgen: Datenstruktur in Datenbank überlegen, schauen, was das Data
 - Typeorm sollte eigentlich alles können, was ich für meine Tests brauche, und notfalls können Queries manuell gebaut werden.
 
 - Ich habe die Scripts nochmal in einen eigenen Ordner verschoben und aufgeräumt.
+
+# 3.6.2021
+
+- Evtl eine gute Idee, einen Testcase über mehrere Seiten laufen zu lassen, z.B. Seite 1 -> 2 -> 5 -> 2 -> 1000
+  Damit sind kleine Sprünge abgedeckt, große Sprünge, Sprünge zu hohen Seitenzahlen und Sprünge zu bereits besuchten Seiten
+
+- Diesen Case kann man nun mit
+  -> min,max,avg auswerten
+  -> naiv, pagination optimization
+  -> verschiedene limitgrößen auswerten
+
+- N+1 kann man entweder mitdemselben Testcase testen oder einen eigenen entwickeln
+  Es ergibt aber glaube ich Sinn, das in eines zu fassen, weil ich einen Testcase für Nutzernahes Verhalten analysieren will
+- naiv, mit dataloader, mit dataloader und redis cache
+- verschiedene Limitgrößen auch hier?
+
+das heißt (noch nicht sicher..)
+
+-> Analyse Testcase mit min,max,avg Zeit über Seitenverlauf
+-> avg von Naiv, Pagination Optimization, N+1 Optimization Dataloader, (N+1 Cache), N+1 Dataloader+Cache und beidem
+->
