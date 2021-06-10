@@ -218,4 +218,10 @@ das heißt (noch nicht sicher..)
 
 -> Analyse Testcase mit min,max,avg Zeit über Seitenverlauf
 -> avg von Naiv, Pagination Optimization, N+1 Optimization Dataloader, (N+1 Cache), N+1 Dataloader+Cache und beidem
-->
+
+# 10.6.2021
+
+- Frontend entfernt, brauch ich für Tests wahrscheinlich nicht
+- GraphQL API mit graphql.js und express-graphql gebaut
+- Unterstützt mehrere Konfigurationen für die Implementierung unterschiedlicher Tests,
+  durch Verwendung von variablem require, welches das graphql schema, resolver und database queries aus unterschiedlichen Unterordnern lädt, je nach --impl Parameter
