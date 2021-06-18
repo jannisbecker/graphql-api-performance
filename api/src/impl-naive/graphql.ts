@@ -1,4 +1,5 @@
 import { buildSchema } from "graphql";
+import { getProducts } from "./data";
 
 const schema = buildSchema(`
   type Product {
@@ -16,12 +17,13 @@ const schema = buildSchema(`
   }
 
   type Query {
-    hello: String!
+    products(offset: Int!, limit:  Int!): [Product!]!
   }
 `);
 
 const resolvers = {
-  hello: () => "world",
+  products: (args: { offset: number; limit: number }) =>
+    getProducts(args.offset, args.limit),
 };
 
 export { schema, resolvers };

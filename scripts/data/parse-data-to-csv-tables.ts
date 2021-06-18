@@ -17,31 +17,13 @@ type DataRecord = {
   category?: string[];
 };
 
-type Product = {
-  id: number;
-  title: string;
-  brand: string;
-  image_url: string;
-  price: string;
-};
-
-type Category = {
-  id: number;
-  name: string;
-};
-
-type ProductCategory = {
-  productId: number;
-  categoryId: number;
-};
-
 const dataStream = fs
   .createReadStream(__dirname + "/in/data.json")
   .pipe(ndjson.parse());
 
 const productWriter = stringify({
   header: true,
-  columns: ["id", "title", "brand", "image_url", "price"],
+  columns: ["id", "name", "brand", "image_url", "price"],
 });
 productWriter.pipe(fs.createWriteStream(__dirname + "/out/data_products.csv"));
 
@@ -69,20 +51,30 @@ let productCount = 0;
 
 // Whenever data from the json file stream comes in
 dataStream.on("data", async (entry: DataRecord) => {
-  // Skip entries that have unclean data, like no title, no image url, or a not properly formatted price tag
-  if (!entry.title || !entry.imageURL[0] || !entry.price.startsWith("$"))
+  // Skip entries that have unclean data, like no title, no brand, no image url, or a not properly formatted price tag
+  if (
+    !entry.title ||
+    !entry.imageURL[0] ||
+    !entry.brand ||
+    !entry.price.startsWith("$")
+  )
     return;
 
   // Decode any strings that might contain html escaped characters
-  entry.title = decode(entry.title);
-  entry.brand = decode(entry.brand);
+  const name: string = decode(entry.title);
+  const brand: string = decode(entry.brand);
+
+  // Parse price by stripping $ sign and parse to float
+  const price: number = parseFloat(entry.price.substr(1));
 
   const productId = productCount++;
 
   // If the entry has categories, process them
   // by writing to the category and product_category tables
   if (entry.category) {
-    entry.category.forEach((name) => {
+    // Create a set to filter out duplicate categories
+    const categories = new Set(entry.category);
+    categories.forEach((name) => {
       // Decode html escaped category names as well
       name = decode(name);
 
@@ -102,10 +94,10 @@ dataStream.on("data", async (entry: DataRecord) => {
   // Then write the product to the product table
   productWriter.write([
     productId,
-    entry.title,
-    entry.brand,
+    name,
+    brand,
     entry.imageURLHighRes[0] || entry.imageURL[0],
-    entry.price,
+    price,
   ]);
 
   console.log("Processed " + productCount + " entries");

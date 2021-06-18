@@ -19,12 +19,14 @@ export class Product {
   brand!: string;
 
   @Column()
-  price!: string;
+  price!: number;
 
   @Column()
   image_url!: string;
 
-  @ManyToMany(() => Category)
+  @ManyToMany(() => Category, {
+    eager: true,
+  })
   @JoinTable()
   categories!: Category[];
 }

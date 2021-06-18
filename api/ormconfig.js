@@ -4,7 +4,8 @@ module.exports = {
   port: 5432,
   username: "postgres",
   password: "postgres",
-  database: "products",
-  entities: [__dirname + "/model/*"],
+  database: "postgres",
+  entities: [__dirname + "/src/model/*"],
   synchronize: true,
+  logging: ["query", "error"],
 };
