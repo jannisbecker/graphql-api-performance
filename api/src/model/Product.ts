@@ -27,6 +27,7 @@ export class Product {
   @ManyToMany(() => Category, {
     eager: true,
   })
+  @ManyToMany(() => Category, (category) => category.products)
   @JoinTable()
   categories!: Category[];
 }

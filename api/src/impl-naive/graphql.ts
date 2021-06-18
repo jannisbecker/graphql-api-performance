@@ -1,7 +1,8 @@
-import { buildSchema } from "graphql";
-import { getProducts } from "./data";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { Product } from "../model/Product";
+import { getCategoriesForProduct, getProducts } from "./data";
 
-const schema = buildSchema(`
+const typeDefs = `
   type Product {
     id: Int!
     name: String!
@@ -19,11 +20,21 @@ const schema = buildSchema(`
   type Query {
     products(offset: Int!, limit:  Int!): [Product!]!
   }
-`);
+`;
+
+type ProductsInput = { offset: number; limit: number };
 
 const resolvers = {
-  products: (args: { offset: number; limit: number }) =>
-    getProducts(args.offset, args.limit),
+  Query: {
+    products(obj: any, args: ProductsInput) {
+      return getProducts(args.offset, args.limit);
+    },
+  },
+  Product: {
+    categories(product: Product) {
+      return getCategoriesForProduct(product.id);
+    },
+  },
 };
 
-export { schema, resolvers };
+export const schema = makeExecutableSchema({ typeDefs, resolvers });

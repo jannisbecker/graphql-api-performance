@@ -5,6 +5,7 @@ import {
   ManyToMany,
   JoinTable,
 } from "typeorm";
+import { Product } from "./Product";
 
 @Entity()
 export class Category {
@@ -13,4 +14,7 @@ export class Category {
 
   @Column()
   name!: string;
+
+  @ManyToMany(() => Product, (product) => product.categories)
+  products!: Product[];
 }

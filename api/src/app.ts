@@ -7,14 +7,13 @@ const implementation =
   implParamIndex > -1 ? process.argv[implParamIndex + 1] : "naive";
 
 createConnection().then(() => {
-  const { schema, resolvers } = require(`./impl-${implementation}/graphql`);
+  const { schema } = require(`./impl-${implementation}/graphql`);
 
   express()
     .use(
       "/",
       graphqlHTTP({
-        schema: schema,
-        rootValue: resolvers,
+        schema,
         graphiql: true,
       })
     )
