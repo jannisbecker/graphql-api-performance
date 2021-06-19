@@ -62,22 +62,20 @@ const resolvers = {
     ) {
       // Don't allow searching in both directions,
       // however giving before and after cursors is permitted but has no effect
-      if (first && last)
-        throw Error("Can't query for both previous and next pages");
+      if (first && last) throw Error("Can't specify limit in both directions");
 
       // Limit the results to either of the given parameters, or default to 10 results per page
       const limit = first ?? last ?? 10;
 
-      // If 'last' is given, we want to search from the end of the list
+      // If 'last' is given, we want to search starting from the end of the list or from before the given cursor
       const searchReverse = !!last;
 
-      // Get and decode the cursor, given
-      const cursor =
-        first && after
-          ? decodeCursor(after)
-          : last && before
-          ? decodeCursor(before)
-          : null;
+      // Get and decode the cursor, if given
+      const cursor = after
+        ? decodeCursor(after)
+        : before
+        ? decodeCursor(before)
+        : null;
 
       // Get the paginated results as well as the total count of entries.
       // Query one more entry than necessary to see if there's a next/previous page
@@ -95,11 +93,11 @@ const resolvers = {
       if (results.length > limit) {
         if (searchReverse) {
           hasPreviousPage = true;
-          results.pop();
         } else {
           hasNextPage = true;
-          results.pop();
         }
+
+        results.pop();
       }
 
       // Construct a graphql connection object and return it
