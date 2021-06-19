@@ -7,5 +7,4 @@ module.exports = {
   database: "postgres",
   entities: [__dirname + "/src/model/*"],
   synchronize: true,
-  logging: ["query", "error"],
 };

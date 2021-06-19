@@ -1,8 +1,9 @@
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import gql from "graphql-tag";
 import { Product } from "../model/Product";
 import { getCategoriesForProduct, getProducts } from "./data";
 
-const typeDefs = `
+const typeDefs = gql`
   type Product {
     id: Int!
     name: String!
@@ -18,7 +19,7 @@ const typeDefs = `
   }
 
   type Query {
-    products(offset: Int!, limit:  Int!): [Product!]!
+    products(offset: Int!, limit: Int!): [Product!]!
   }
 `;
 

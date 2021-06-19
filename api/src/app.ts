@@ -19,5 +19,6 @@ createConnection().then(() => {
     )
     .listen(3000);
 
+  console.log(`Starting with implementation '${implementation}'`);
   console.log("Running graphql api on http://localhost:3000/");
 });
