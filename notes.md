@@ -225,3 +225,11 @@ das heißt (noch nicht sicher..)
 - GraphQL API mit graphql.js und express-graphql gebaut
 - Unterstützt mehrere Konfigurationen für die Implementierung unterschiedlicher Tests,
   durch Verwendung von variablem require, welches das graphql schema, resolver und database queries aus unterschiedlichen Unterordnern lädt, je nach --impl Parameter
+
+# 19.6.2021
+
+- Implementierung der cursor-basierten Pagination
+  -> deutlich flexibler beim Queryen, da man in beide Richtungen paginieren kann.
+  -> extrem schnell auch bei großen Datensätzen, großen "offsets"
+  -> komplizierter zu implementieren
+  -> unterstützt natürlich standardmäßig keine Seitenzahlen, es sei aber das Ziel, das zu ermöglichen
