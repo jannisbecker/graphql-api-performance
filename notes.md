@@ -245,3 +245,10 @@ das heißt (noch nicht sicher..)
     -> cursor + offset Implementierung + Caching + intelligente Abfrage des Caches (im Test implementiert)
 
   - Eventuell sollte die Abfolge von Seiten noch leicht angepasst werden, um die Auswirkungen des letzten Testfalls zu sehen
+    (z.B. 1 -> 2 -> 10 -> 1000 -> 1001 -> 5 -> 1)
+
+# 8.7.2021
+
+- getManyAndCount() ist ein riesiges Performance Bottleneck, weil es alle Einträge in der Datenbank zählt.
+  Um den Cursor Ansatz mit dem Offsetansatz vergleichbar zu machen (bei dem kein Count stattfindet) habe ich das entfernt.
+  In einem realistischen Szenario gibt es zwar das totalCount Feld auf einer graphQL Connection, aber da sollte man, nur wenn das Feld auch tatsächlich angefragt wird, den COUNT in der Datenbank machen, sonst nicht.
