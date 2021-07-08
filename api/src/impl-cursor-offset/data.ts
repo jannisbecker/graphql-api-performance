@@ -10,7 +10,7 @@ async function getProductsPaginated(
   cursor: string | null,
   offset: number,
   limit: number
-): Promise<[Product[], number]> {
+): Promise<Product[]> {
   let builder = productsRepository.createQueryBuilder("product").limit(limit);
 
   // Jump to given cursor and search either before or after it
@@ -34,8 +34,8 @@ async function getProductsPaginated(
     builder = builder.orderBy("product.id", "ASC");
   }
 
-  // Return results and the count of them
-  return builder.getManyAndCount();
+  // Return results
+  return builder.getMany();
 }
 
 async function getCategoriesForProduct(productId: number): Promise<Category[]> {

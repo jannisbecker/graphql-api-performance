@@ -70,7 +70,7 @@ const resolvers = {
 
       // Get the paginated results as well as the total count of entries.
       // Query one more entry than necessary to see if there's a next/previous page
-      const [results, totalCount] = await getProductsPaginated(
+      const results = await getProductsPaginated(
         searchReverse,
         cursor,
         offset,
@@ -93,7 +93,7 @@ const resolvers = {
       }
 
       // Construct a graphql connection object and return it
-      return buildConnection(results, totalCount, hasPreviousPage, hasNextPage);
+      return buildConnection(results, hasPreviousPage, hasNextPage);
     },
   },
   Product: {
