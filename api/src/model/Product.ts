@@ -18,7 +18,7 @@ export class Product {
   @Column()
   brand!: string;
 
-  @Column()
+  @Column({ type: "decimal" })
   price!: number;
 
   @Column()
