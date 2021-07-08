@@ -252,3 +252,6 @@ das heißt (noch nicht sicher..)
 - getManyAndCount() ist ein riesiges Performance Bottleneck, weil es alle Einträge in der Datenbank zählt.
   Um den Cursor Ansatz mit dem Offsetansatz vergleichbar zu machen (bei dem kein Count stattfindet) habe ich das entfernt.
   In einem realistischen Szenario gibt es zwar das totalCount Feld auf einer graphQL Connection, aber da sollte man, nur wenn das Feld auch tatsächlich angefragt wird, den COUNT in der Datenbank machen, sonst nicht.
+  Eigentlich müsste auch das offset-Verfahren einen COUNT verwenden, sonst wüsste das Frontend gar nicht, wie viele Seiten es gibt.
+  Der Fairness halber sollten die Tests jedoch entweder beide mit oder ohne COUNT implementiert werden. Da der COUNT derselbe ist und in der Datenbank stattfindet,
+  wird es zwischen den Verfahren jedoch keinen Unterschied machen. Nur bei GraphQL könnte man dem Client gestatten, den Count nicht anzufragen, oder nur einmal und nicht bei jedem Request (da hier die zurückgegebenen Felder anpassbar sind)
