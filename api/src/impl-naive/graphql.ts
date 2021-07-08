@@ -23,11 +23,9 @@ const typeDefs = gql`
   }
 `;
 
-type ProductsInput = { offset: number; limit: number };
-
 const resolvers = {
   Query: {
-    products(obj: any, args: ProductsInput) {
+    products(obj: any, args: any) {
       return getProducts(args.offset, args.limit);
     },
   },

@@ -43,23 +43,14 @@ const typeDefs = gql`
       before: String
       last: Int
       after: String
+      offset: Int # enables relative offset use on top of cursor pagination
     ): ProductConnection
   }
 `;
 
-type ProductConnectionInput = {
-  first: number;
-  after: string;
-  last: number;
-  before: string;
-};
-
 const resolvers = {
   Query: {
-    async products(
-      obj: any,
-      { first, after, last, before }: ProductConnectionInput
-    ) {
+    async products(obj: any, { first, after, last, before, offset }: any) {
       // Don't allow searching in both directions,
       // however giving before and after cursors is permitted but has no effect
       if (first && last) throw Error("Can't specify limit in both directions");
@@ -82,6 +73,7 @@ const resolvers = {
       const [results, totalCount] = await getProductsPaginated(
         searchReverse,
         cursor,
+        offset,
         limit + 1
       );
 

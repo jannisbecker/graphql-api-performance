@@ -233,3 +233,15 @@ das heißt (noch nicht sicher..)
   -> extrem schnell auch bei großen Datensätzen, großen "offsets"
   -> komplizierter zu implementieren
   -> unterstützt natürlich standardmäßig keine Seitenzahlen, es sei aber das Ziel, das zu ermöglichen
+
+# 7.7.2021
+
+- Weitere Überlegungen zu Testing der Pagination
+
+  - Es werden mehrere Implementierungen benötigt um die Performance zu testen:
+    -> naive Implementierung über offsets
+    -> cursor + offset Implementierung
+    -> cursor + offset Implementierung + Caching der Cursor im Frontend (im Test implementiert)
+    -> cursor + offset Implementierung + Caching + intelligente Abfrage des Caches (im Test implementiert)
+
+  - Eventuell sollte die Abfolge von Seiten noch leicht angepasst werden, um die Auswirkungen des letzten Testfalls zu sehen
