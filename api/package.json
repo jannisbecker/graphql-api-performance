@@ -2,10 +2,11 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node-dev src/app.ts",
-    "build": "tsc src/app.ts"
+    "dev": "ts-node-dev src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js"
   },
   "author": "Jannis Becker",
   "license": "ISC",

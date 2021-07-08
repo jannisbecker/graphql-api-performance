@@ -5,6 +5,6 @@ module.exports = {
   username: "postgres",
   password: "postgres",
   database: "postgres",
-  entities: [__dirname + "/src/model/*"],
+  entities: [__dirname + "/dist/model/*"],
   synchronize: true,
 };
