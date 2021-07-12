@@ -7,13 +7,15 @@ const categoriesRepository = getRepository(Category);
 
 async function getProductsPaginated(
   searchFromEnd: boolean,
-  cursor: string | null,
+  cursor: string,
   offset: number,
   limit: number
 ): Promise<Product[]> {
+  // Erstelle den QueryBuilder und übergebe bereits das Limit
   let builder = productsRepository.createQueryBuilder("product").limit(limit);
 
-  // Jump to given cursor and search either before or after it
+  // Starte an der Position des gegebenen Cursors und suche die Elemente
+  // je nach Suchrichtung vor oder nach dem Cursor
   if (cursor) {
     if (searchFromEnd) {
       builder = builder.where("product.id < :cursor", { cursor });
@@ -22,19 +24,19 @@ async function getProductsPaginated(
     }
   }
 
-  // Jump away from cursor by given offset, if set
+  // Sofern ein Offset gegeben ist, übergebe es an den Query
   if (offset) {
     builder = builder.offset(offset);
   }
 
-  // Order the results according to the given search direction
+  // Lege die Sortierung je nach Suchrichtung fest
   if (searchFromEnd) {
     builder = builder.orderBy("product.id", "DESC");
   } else {
     builder = builder.orderBy("product.id", "ASC");
   }
 
-  // Return results
+  // Führe den Query aus
   return builder.getMany();
 }
 

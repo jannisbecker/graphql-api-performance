@@ -43,33 +43,32 @@ const typeDefs = gql`
       before: String
       last: Int
       after: String
-      offset: Int # enables relative offset use on top of cursor pagination
-    ): ProductConnection
+      # Zusätzlicher Offset Parameter zur Verwendung relativer Offsets
+      offset: Int
+    ): ProductConnection!
   }
 `;
 
 const resolvers = {
   Query: {
     async products(obj: any, { first, after, last, before, offset }: any) {
-      // Don't allow searching in both directions,
-      // however giving before and after cursors is permitted but has no effect
+      // Verhindere das gleichzeitige Verwenden von 'first' und 'last' Parametern
       if (first && last) throw Error("Can't specify limit in both directions");
 
-      // Limit the results to either of the given parameters, or default to 10 results per page
+      // Das Limit ergibt sich aus 'first' oder 'last', oder einem Standardwert von 10
       const limit = first ?? last ?? 10;
 
-      // If 'last' is given, we want to search starting from the end of the list or from before the given cursor
+      // Invertiere die Suchrichtung, wenn 'last' gegeben ist
       const searchReverse = !!last;
 
-      // Get and decode the cursor, if given
+      // Dekodiere den Cursor, falls angegeben
       const cursor = after
         ? decodeCursor(after)
         : before
         ? decodeCursor(before)
         : null;
 
-      // Get the paginated results as well as the total count of entries.
-      // Query one more entry than necessary to see if there's a next/previous page
+      // Hole die Datensätze aus der Datenbank, jedoch einen Eintrag mehr als benötigt
       const results = await getProductsPaginated(
         searchReverse,
         cursor,
@@ -80,8 +79,8 @@ const resolvers = {
       let hasNextPage = false,
         hasPreviousPage = false;
 
-      // If results contains one more entry than we want, it means there's a next/previous page.
-      // We also need to remove that element from the results again
+      // Falls die Ergebnisse tatsächlich limit + 1 Ergebnisse enthalten,
+      // so existiert eine weitere Seite
       if (results.length > limit) {
         if (searchReverse) {
           hasPreviousPage = true;
@@ -89,10 +88,11 @@ const resolvers = {
           hasNextPage = true;
         }
 
+        // Entferne das überschüssige Element
         results.pop();
       }
 
-      // Construct a graphql connection object and return it
+      // Baue das Connection Objekt aus den Ergebnissen und gebe es zurück
       return buildConnection(results, hasPreviousPage, hasNextPage);
     },
   },
