@@ -1,5 +1,3 @@
-export const CURSOR_FIELD = "id";
-
 export function encodeCursor(data: any): string {
   return Buffer.from(data.toString(), "ascii").toString("base64");
 }
@@ -13,10 +11,13 @@ export function buildConnection(
   hasPreviousPage: boolean,
   hasNextPage: boolean
 ) {
+  // Baue Edge Objekte aus den Datensätzen
   const edges = items.map((item) => ({
     node: item,
-    cursor: encodeCursor(item[CURSOR_FIELD]),
+    cursor: encodeCursor(item.id),
   }));
+
+  // Gebe ein Connection Objekt mit den edges und einer PageInfo zurück
   return {
     edges,
     pageInfo: {

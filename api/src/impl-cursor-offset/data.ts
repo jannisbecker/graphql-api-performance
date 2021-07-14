@@ -29,15 +29,17 @@ async function getProductsPaginated(
     builder = builder.offset(offset);
   }
 
-  // Lege die Sortierung je nach Suchrichtung fest
+  // Lege die Sortierung fest und führe den Query aus.
+  // In umgekehrter Suchrichtung die Sortierung umgedreht, limitiert und dann wieder umgedreht werden,
+  // da es in SQL kein LIMIT vom Ende der Ergebnisse gibt
   if (searchFromEnd) {
-    builder = builder.orderBy("product.id", "DESC");
+    return builder
+      .orderBy("product.id", "DESC")
+      .getMany()
+      .then((entries) => entries.reverse());
   } else {
-    builder = builder.orderBy("product.id", "ASC");
+    return builder.orderBy("product.id", "ASC").getMany();
   }
-
-  // Führe den Query aus
-  return builder.getMany();
 }
 
 async function getCategoriesForProduct(productId: number): Promise<Category[]> {

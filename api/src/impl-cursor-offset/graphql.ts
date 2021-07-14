@@ -82,14 +82,14 @@ const resolvers = {
       // Falls die Ergebnisse tatsächlich limit + 1 Ergebnisse enthalten,
       // so existiert eine weitere Seite
       if (results.length > limit) {
+        // Entferne das überschüssige Element, je nach Suchrichtung am Anfang oder Ende der Liste
         if (searchReverse) {
           hasPreviousPage = true;
+          results.shift();
         } else {
           hasNextPage = true;
+          results.pop();
         }
-
-        // Entferne das überschüssige Element
-        results.pop();
       }
 
       // Baue das Connection Objekt aus den Ergebnissen und gebe es zurück
