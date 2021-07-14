@@ -1,7 +1,7 @@
 export const CURSOR_FIELD = "id";
 
-export function encodeCursor(data: string): string {
-  return Buffer.from(data, "ascii").toString("base64");
+export function encodeCursor(data: any): string {
+  return Buffer.from(data.toString(), "ascii").toString("base64");
 }
 
 export function decodeCursor(cursor: string): string {
