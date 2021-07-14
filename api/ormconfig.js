@@ -1,3 +1,5 @@
+const entityFolder = __dirname + `/${process.env.TS_NODE_DEV ? "src" : "dist"}/model/*`
+
 module.exports = {
   type: "postgres",
   host: "localhost",
@@ -5,6 +7,6 @@ module.exports = {
   username: "postgres",
   password: "postgres",
   database: "postgres",
-  entities: [__dirname + "/dist/model/*"],
+  entities: [entityFolder],
   synchronize: true,
 };
