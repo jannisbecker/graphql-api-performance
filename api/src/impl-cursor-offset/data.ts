@@ -7,7 +7,7 @@ const categoriesRepository = getRepository(Category);
 
 async function getProductsPaginated(
   searchFromEnd: boolean,
-  cursor: string,
+  cursor: string | null,
   offset: number,
   limit: number
 ): Promise<Product[]> {

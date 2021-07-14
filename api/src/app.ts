@@ -6,6 +6,8 @@ const implParamIndex = process.argv.indexOf("--impl");
 const implementation =
   implParamIndex > -1 ? process.argv[implParamIndex + 1] : "naive";
 
+console.log(`Starting with implementation '${implementation}'`);
+
 createConnection().then(() => {
   const { schema } = require(`./impl-${implementation}/graphql`);
 
@@ -19,6 +21,5 @@ createConnection().then(() => {
     )
     .listen(3000);
 
-  console.log(`Starting with implementation '${implementation}'`);
   console.log("Running graphql api on http://localhost:3000/");
 });
