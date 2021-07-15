@@ -255,3 +255,61 @@ das heißt (noch nicht sicher..)
   Eigentlich müsste auch das offset-Verfahren einen COUNT verwenden, sonst wüsste das Frontend gar nicht, wie viele Seiten es gibt.
   Der Fairness halber sollten die Tests jedoch entweder beide mit oder ohne COUNT implementiert werden. Da der COUNT derselbe ist und in der Datenbank stattfindet,
   wird es zwischen den Verfahren jedoch keinen Unterschied machen. Nur bei GraphQL könnte man dem Client gestatten, den Count nicht anzufragen, oder nur einmal und nicht bei jedem Request (da hier die zurückgegebenen Felder anpassbar sind)
+
+# 15.7.2021
+
+- Planung der Tests
+
+  - Anfrage:
+    Parameter je nach Test
+
+    ```
+    products(first: 10) {
+      edges {
+        node {
+          id
+          name
+          categories {
+            id
+            name
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+    ```
+
+  - Messung der Antwortzeit über npm Paket response-time (serverseitig) oder über axios interceptor (clientseitig)
+
+  - Optimierungen, die getestet werden sollen:
+
+    - Vergleich der beiden Pagination Ansätze
+      -> Jeweils 100 Anfragenläufe über die Seitenzahlen 1 -> 2 -> 10 -> 1000 -> 1001 -> 5 -> 1
+      => Visualisierung mit Linechart: min,max,avg Laufzeit über jede Seite, jew Lines für offset und cursor verfahren
+
+    - Einfluss des Cursor Cachings im Test
+      -> Cursor-Verfahren Testdurchlauf, aber mit Cursorcaching
+
+      => Visualisierung mit Linechart: avg (oder min,max,avg) Laufzeit über jede Seite, jew Lines für mit und ohne Cursor Caching
+
+    - Einfluss des intelligenten Cursor Lookup Algorithmus (evtl auslassen)
+      -> Cursor-Verfahren Testdurchlauf, aber mit Cursor Lookup Algorithmus
+
+      => Visualisierung mit Linechart: avg (oder min,max,avg) Laufzeit über jede Seite, jew Lines für Cursor Lookup Algorithmus und Cursor Caching
+
+    - Einfluss des Dataloaders im Backend (Performance + ist das Problem gelöst?)
+      -> Cursor-Verfahren Testdurchlauf, aber mit Dataloader im Backend
+
+      => Visualisierung Linechart: avg Laufzeit (y Achse) über jede Seite, jew. eine Linie mit und ohne Dataloader
+
+    - Einfluss des Daten Cachings im Backend (evtl auslassen)
+      -> Cursor-Verfahren Testdurchlauf, aber mit Redis Cache der Daten für Query Parameter cached
+
+      => Visualisierung Linechart: avg Laufzeit (y Achse) über jede Seite, jew. eine Linie mit und ohne Caching
+
+    - Einfluss verschiedener Seitenlimits bei beiden Ansätzen

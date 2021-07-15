@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {            
+    "target": "es6", 
+    "module": "commonjs",    
+    "strict": true,  
+    "outDir": "./dist",                  
+    "esModuleInterop": true,   
+    "skipLibCheck": true,                       
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,    
+  },
+  "include": ["src/**/*.ts"]
+}
