@@ -4,7 +4,7 @@ import { createConnection } from "typeorm";
 
 const implParamIndex = process.argv.indexOf("--impl");
 const implementation =
-  implParamIndex > -1 ? process.argv[implParamIndex + 1] : "naive";
+  implParamIndex > -1 ? process.argv[implParamIndex + 1] : "offset";
 
 console.log(`Starting with implementation '${implementation}'`);
 

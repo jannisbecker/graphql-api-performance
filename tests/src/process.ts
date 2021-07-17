@@ -9,11 +9,11 @@ export function buildBackend() {
 }
 
 export function startBackend(impl: Impl) {
-  console.log(`Starting backend with implementation ${impl}`);
-
   if (backend_process) {
+    console.log("Stopping running backend");
     backend_process.kill();
   }
 
+  console.log(`Starting backend with implementation ${impl}`);
   backend_process = exec(`npm --prefix ../api run start -- --impl ${impl}`);
 }

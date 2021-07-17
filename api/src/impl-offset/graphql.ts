@@ -19,14 +19,17 @@ const typeDefs = gql`
   }
 
   type Query {
-    products(offset: Int!, limit: Int!): [Product!]!
+    products(offset: Int, limit: Int): [Product!]!
   }
 `;
 
 const resolvers = {
   Query: {
-    products(obj: any, args: any) {
-      return getProducts(args.offset, args.limit);
+    products(obj: any, { offset, limit }: any) {
+      offset = offset ?? 0;
+      limit = limit ?? 10;
+
+      return getProducts(offset, limit);
     },
   },
   Product: {

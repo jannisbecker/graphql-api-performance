@@ -6,7 +6,6 @@ export const TEST_PAGES = [1, 2, 10, 1000, 1001, 5, 1];
 export const TEST_RUNS = 10;
 
 buildBackend();
-startBackend(Impl.CURSOR);
 
 const results: TestResults = [
   [0.5, 12.2, 23.25, 16.2523, 53, 42, 69],
@@ -15,4 +14,6 @@ const results: TestResults = [
 
 exportResults(results, "bruh.csv");
 
-// sample test implementation
+// get next page out of last response
+// get next page out of cached cursors using last response
+// get next page out of cached cursors using algorithm
