@@ -2,6 +2,9 @@ import express from "express";
 import { graphqlHTTP } from "express-graphql";
 import { createConnection } from "typeorm";
 
+// Add response-time middleware to measure response timings
+import responseTime from "response-time";
+
 const implParamIndex = process.argv.indexOf("--impl");
 const implementation =
   implParamIndex > -1 ? process.argv[implParamIndex + 1] : "offset";
@@ -12,6 +15,7 @@ createConnection().then(() => {
   const { schema } = require(`./impl-${implementation}/graphql`);
 
   express()
+    .use(responseTime({ suffix: false }))
     .use(
       "/",
       graphqlHTTP({
