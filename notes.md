@@ -288,26 +288,26 @@ das heißt (noch nicht sicher..)
 
   - Optimierungen, die getestet werden sollen:
 
-    - Vergleich der beiden Pagination Ansätze
+    - Test 1 & 2 Vergleich der beiden Pagination Ansätze
       -> Jeweils 100 Anfragenläufe über die Seitenzahlen 1 -> 2 -> 10 -> 1000 -> 1001 -> 5 -> 1
       => Visualisierung mit Linechart: min,max,avg Laufzeit über jede Seite, jew Lines für offset und cursor verfahren
 
-    - Einfluss des Cursor Cachings im Test
+    - Test 3: Einfluss des Cursor Cachings im Test
       -> Cursor-Verfahren Testdurchlauf, aber mit Cursorcaching
 
       => Visualisierung mit Linechart: avg (oder min,max,avg) Laufzeit über jede Seite, jew Lines für mit und ohne Cursor Caching
 
-    - Einfluss des intelligenten Cursor Lookup Algorithmus (evtl auslassen)
+    - Test 4: Einfluss des intelligenten Cursor Lookup Algorithmus (evtl auslassen)
       -> Cursor-Verfahren Testdurchlauf, aber mit Cursor Lookup Algorithmus
 
       => Visualisierung mit Linechart: avg (oder min,max,avg) Laufzeit über jede Seite, jew Lines für Cursor Lookup Algorithmus und Cursor Caching
 
-    - Einfluss des Dataloaders im Backend (Performance + ist das Problem gelöst?)
+    - Test 5: Einfluss des Dataloaders im Backend (Performance + ist das Problem gelöst?)
       -> Cursor-Verfahren Testdurchlauf, aber mit Dataloader im Backend
 
       => Visualisierung Linechart: avg Laufzeit (y Achse) über jede Seite, jew. eine Linie mit und ohne Dataloader
 
-    - Einfluss des Daten Cachings im Backend (evtl auslassen)
+    - Test 6: Einfluss des Daten Cachings im Backend (evtl auslassen)
       -> Cursor-Verfahren Testdurchlauf, aber mit Redis Cache der Daten für Query Parameter cached
 
       => Visualisierung Linechart: avg Laufzeit (y Achse) über jede Seite, jew. eine Linie mit und ohne Caching
