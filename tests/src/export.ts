@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import stringify from "csv-stringify/lib/sync";
-import { TEST_PAGES } from "./test-runner";
+import { TEST_PAGES } from ".";
 import { TestResults } from "./types";
 
 export function exportResults(results: TestResults, file: string) {
