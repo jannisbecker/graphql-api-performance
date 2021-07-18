@@ -6,13 +6,15 @@ import {
   buildOffsetRequestParams,
   buildRequestParamsFromPreviousResponse,
   buildRequestParamsWithCursorCache,
+  buildRequestParamsWithCursorCacheAlgorithm,
 } from "./request";
 import { CursorQueryParams, Impl, TestResults } from "./types";
 import range from "lodash.range";
+import { addPageToCache, clearCache } from "./cursor-cache";
 
 export const TEST_PAGES = [1, 2, 10, 1000, 1001, 5, 1];
 export const TEST_RUNS = 100;
-export const LIMIT = 100;
+export const LIMIT = 30;
 
 function logAverages(results: TestResults) {
   console.log(
@@ -29,7 +31,6 @@ function logAverages(results: TestResults) {
   console.log("> Test 1: Offset-basiertes Verfahren");
   {
     await startBackend(Impl.OFFSET);
-    await doOffsetRequest({ limit: 10 }); // warmup
 
     const results = await testOffsetImplementation();
     logAverages(results);
@@ -39,7 +40,6 @@ function logAverages(results: TestResults) {
   console.log("> Test 2: Cursor-basiertes Verfahren");
   {
     await startBackend(Impl.CURSOR);
-    await doCursorRequest({ first: 10 }); // warmup
 
     const results = await testCursorImplementation();
     logAverages(results);
@@ -51,11 +51,21 @@ function logAverages(results: TestResults) {
   );
   {
     await startBackend(Impl.CURSOR);
-    await doCursorRequest({ first: 10 }); // warmup
 
     const results = await testCursorCaching();
     logAverages(results);
     exportResults(results, "test3.csv");
+  }
+
+  console.log(
+    "> Test 4: Einfluss des intelligenten Lookup Algorithmus beim Cursor Caching im Frontend (Cursor-basiertes Verfahren)"
+  );
+  {
+    await startBackend(Impl.CURSOR);
+
+    const results = await testCursorCachingWithAlgorithm();
+    logAverages(results);
+    exportResults(results, "test4.csv");
   }
 })();
 
@@ -63,9 +73,7 @@ function logAverages(results: TestResults) {
  * Test 1: Laufzeiten des Offset-basiertes Verfahren
  */
 async function testOffsetImplementation(): Promise<TestResults> {
-  const testResults = [];
-
-  for (let run of range(0, TEST_RUNS)) {
+  async function doTestRun() {
     const runResults = [];
 
     for (let page of TEST_PAGES) {
@@ -74,7 +82,16 @@ async function testOffsetImplementation(): Promise<TestResults> {
       runResults.push(runtime);
     }
 
-    testResults.push(runResults);
+    return runResults;
+  }
+
+  console.log("=> Doing warmup run");
+  await doTestRun();
+
+  console.log("=> Running test");
+  const testResults = [];
+  for (let run of range(0, TEST_RUNS)) {
+    testResults.push(await doTestRun());
   }
 
   return testResults;
@@ -84,9 +101,7 @@ async function testOffsetImplementation(): Promise<TestResults> {
  * Test 2: Laufzeiten des Cursor-basierten Verfahren
  */
 async function testCursorImplementation(): Promise<TestResults> {
-  const testResults = [];
-
-  for (let run of range(0, TEST_RUNS)) {
+  async function doTestRun() {
     const runResults = [];
 
     let previousPage;
@@ -113,7 +128,16 @@ async function testCursorImplementation(): Promise<TestResults> {
       previousResponse = req.response;
     }
 
-    testResults.push(runResults);
+    return runResults;
+  }
+
+  console.log("=> Doing warmup run");
+  await doTestRun();
+
+  console.log("=> Running test");
+  const testResults = [];
+  for (let run of range(0, TEST_RUNS)) {
+    testResults.push(await doTestRun());
   }
 
   return testResults;
@@ -123,35 +147,113 @@ async function testCursorImplementation(): Promise<TestResults> {
  * Test 3: Laufzeiten des Cursor-basierten Verfahren inklusive Cursor Cache
  */
 async function testCursorCaching(): Promise<TestResults> {
-  const testResults = [];
-
-  for (let run of range(0, TEST_RUNS)) {
+  async function doTestRun() {
     const runResults = [];
 
-    let lastPage;
-    let lastResponse;
+    let previousPage;
+    let previousResponse;
+
     for (let page of TEST_PAGES) {
       let params;
 
-      if (!lastResponse || !lastPage) {
+      if (!previousResponse || !previousPage) {
         params = { first: LIMIT };
       } else {
+        // build params while using the cursor cache
         params = buildRequestParamsWithCursorCache(
-          lastResponse,
-          lastPage,
+          previousResponse,
+          previousPage,
           page,
           LIMIT
         );
       }
 
       const req = await doCursorRequest(params);
+
+      // add newly requested to cache
+      addPageToCache(
+        page,
+        req.response.data.products.pageInfo.startCursor,
+        req.response.data.products.pageInfo.endCursor
+      );
+
       runResults.push(req.time);
 
-      lastPage = page;
-      lastResponse = req.response;
+      previousPage = page;
+      previousResponse = req.response;
     }
 
-    testResults.push(runResults);
+    // clear cache after every run
+    clearCache();
+
+    return runResults;
+  }
+
+  console.log("=> Doing warmup run");
+  await doTestRun();
+
+  console.log("=> Running test");
+  const testResults = [];
+  for (let run of range(0, TEST_RUNS)) {
+    testResults.push(await doTestRun());
+  }
+
+  return testResults;
+}
+
+/**
+ * Test 4: Laufzeiten des Cursor-basierten Verfahren inklusive Cursor Cache und Lookup Algorithmus
+ */
+async function testCursorCachingWithAlgorithm(): Promise<TestResults> {
+  async function doTestRun() {
+    const runResults = [];
+
+    let previousPage;
+    let previousResponse;
+
+    for (let page of TEST_PAGES) {
+      let params;
+
+      if (!previousResponse || !previousPage) {
+        params = { first: LIMIT };
+      } else {
+        // build params while using the cursor cache + the lookup algorithm
+        params = buildRequestParamsWithCursorCacheAlgorithm(
+          previousResponse,
+          previousPage,
+          page,
+          LIMIT
+        );
+      }
+
+      const req = await doCursorRequest(params);
+
+      // add newly requested to cache
+      addPageToCache(
+        page,
+        req.response.data.products.pageInfo.startCursor,
+        req.response.data.products.pageInfo.endCursor
+      );
+
+      runResults.push(req.time);
+
+      previousPage = page;
+      previousResponse = req.response;
+    }
+
+    // clear cache after every run
+    clearCache();
+
+    return runResults;
+  }
+
+  console.log("=> Doing warmup run");
+  await doTestRun();
+
+  console.log("=> Running test");
+  const testResults = [];
+  for (let run of range(0, TEST_RUNS)) {
+    testResults.push(await doTestRun());
   }
 
   return testResults;

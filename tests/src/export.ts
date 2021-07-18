@@ -6,7 +6,11 @@ import { TestResults } from "./types";
 export function exportResults(results: TestResults, file: string) {
   const csv = stringify(results, {
     header: true,
-    columns: TEST_PAGES.map(String),
+    columns: TEST_PAGES.map((p) => `Page ${p}`),
+    delimiter: ";",
+    cast: {
+      number: (value) => value.toLocaleString("de"),
+    },
   });
 
   writeFileSync(file, csv);
