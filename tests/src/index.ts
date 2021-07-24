@@ -1,5 +1,5 @@
 import { exportResults } from "./export";
-import { buildBackend, startBackend } from "./process";
+import { buildBackend, startBackend, stopBackend } from "./process";
 import {
   doOffsetRequest,
   doCursorRequest,
@@ -8,9 +8,10 @@ import {
   buildRequestParamsWithCursorCache,
   buildRequestParamsWithCursorCacheAlgorithm,
 } from "./request";
-import { CursorQueryParams, Impl, TestResults } from "./types";
+import { Impl, TestResults } from "./types";
 import range from "lodash.range";
 import { addPageToCache, clearCache } from "./cursor-cache";
+import { startAutocannon, stopAutocannon } from "./autocannon";
 
 export const TEST_PAGES = [1, 2, 10, 1000, 1001, 5, 1];
 export const WARMUP_RUNS = 30;
@@ -18,6 +19,7 @@ export const TEST_RUNS = 100;
 export const LIMIT = 30;
 
 function logAverages(results: TestResults) {
+  console.log("Average runtimes for each page:");
   console.log(
     TEST_PAGES.map(
       (page, i) =>
@@ -32,8 +34,11 @@ function logAverages(results: TestResults) {
   console.log("> Test 1: Offset-basiertes Verfahren");
   {
     await startBackend(Impl.OFFSET);
+    startAutocannon(false);
 
     const results = await runTest(offsetTestRun);
+
+    stopAutocannon();
     logAverages(results);
     exportResults(results, "test1.csv");
   }
@@ -41,8 +46,11 @@ function logAverages(results: TestResults) {
   console.log("> Test 2: Cursor-basiertes Verfahren");
   {
     await startBackend(Impl.CURSOR);
+    startAutocannon(true);
 
     const results = await runTest(cursorTestRun);
+
+    stopAutocannon();
     logAverages(results);
     exportResults(results, "test2.csv");
   }
@@ -52,8 +60,11 @@ function logAverages(results: TestResults) {
   );
   {
     await startBackend(Impl.CURSOR);
+    startAutocannon(true);
 
     const results = await runTest(cursorCachingTestRun);
+
+    stopAutocannon();
     logAverages(results);
     exportResults(results, "test3.csv");
   }
@@ -63,11 +74,17 @@ function logAverages(results: TestResults) {
   );
   {
     await startBackend(Impl.CURSOR);
+    startAutocannon(true);
 
     const results = await runTest(cursorCachingAlgorithmTestRun);
+
+    stopAutocannon();
     logAverages(results);
     exportResults(results, "test4.csv");
   }
+
+  await stopBackend();
+  console.log("Tests abgeschlossen");
 })();
 
 // Runs a single test using the given implementation function.

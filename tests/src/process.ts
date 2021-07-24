@@ -13,15 +13,20 @@ export function buildBackend() {
 
 export async function startBackend(impl: Impl) {
   if (backend_process) {
-    console.log("Stopping running backend");
-    backend_process.kill(SIGINT);
-    // wait for it to stop
-    await sleep(5000);
+    await stopBackend();
   }
 
   console.log(`Starting backend with implementation '${impl}'`);
   backend_process = exec(`npm --prefix ../api run start -- --impl ${impl}`);
 
   // wait for it to start
+  await sleep(5000);
+}
+
+export async function stopBackend() {
+  console.log("Stopping backend");
+  backend_process.kill(SIGINT);
+
+  // wait for it to stop
   await sleep(5000);
 }

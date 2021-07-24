@@ -297,7 +297,7 @@ das heißt (noch nicht sicher..)
 
       => Visualisierung mit Linechart: avg (oder min,max,avg) Laufzeit über jede Seite, jew Lines für mit und ohne Cursor Caching
 
-    - Test 4: Einfluss des intelligenten Cursor Lookup Algorithmus (evtl auslassen)
+    - Test 4: Einfluss des intelligenten Cursor Lookup Algorithmus
       -> Cursor-Verfahren Testdurchlauf, aber mit Cursor Lookup Algorithmus
 
       => Visualisierung mit Linechart: avg (oder min,max,avg) Laufzeit über jede Seite, jew Lines für Cursor Lookup Algorithmus und Cursor Caching
@@ -313,3 +313,8 @@ das heißt (noch nicht sicher..)
       => Visualisierung Linechart: avg Laufzeit (y Achse) über jede Seite, jew. eine Linie mit und ohne Caching
 
     - Einfluss verschiedener Seitenlimits bei beiden Ansätzen
+
+# Gespräch 21.7.
+
+- Last durch autocannon hinzufügen.
+- Bis Ende der Woche Tests und Dataloader implementiert haben

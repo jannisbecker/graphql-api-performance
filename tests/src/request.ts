@@ -8,6 +8,46 @@ import {
 import fetch from "node-fetch";
 import { findNearestCursorsInCache, getPageFromCache } from "./cursor-cache";
 
+export const OFFSET_QUERY = `
+query offsetPagination($limit: Int, $offset: Int) {
+  products(limit: $limit, offset: $offset) {
+    id
+    name
+    brand
+    price
+    image_url
+    categories {
+      id
+      name
+    }
+  }
+}`;
+
+export const CURSOR_QUERY = `
+query cursorPaginationWithOffsets($after: String, $first: Int, $before: String, $last: Int, $offset: Int) {
+  products(after: $after, first: $first, before: $before, last: $last, offset: $offset) {
+    edges {
+      node {
+        id
+        name
+        brand
+        price
+        image_url
+        categories {
+          id
+          name
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}`;
+
 export async function doOffsetRequest(params: OffsetQueryParams): Promise<{
   response: OffsetResponseBody;
   time: number;
@@ -19,17 +59,7 @@ export async function doOffsetRequest(params: OffsetQueryParams): Promise<{
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      query: `
-      query offsetPagination($limit: Int, $offset: Int) {
-        products(limit: $limit, offset: $offset) {
-          id
-          name
-          categories {
-            id
-            name
-          }
-        }
-      }`,
+      query: OFFSET_QUERY,
       variables: params,
     }),
   }).then(async (resp) => {
@@ -54,27 +84,7 @@ export async function doCursorRequest(params: CursorQueryParams): Promise<{
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      query: `
-      query cursorPaginationWithOffsets($after: String, $first: Int, $before: String, $last: Int, $offset: Int) {
-        products(after: $after, first: $first, before: $before, last: $last, offset: $offset) {
-          edges {
-            node {
-              id
-              name
-              categories {
-                id
-                name
-              }
-            }
-          }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-        }
-      }`,
+      query: CURSOR_QUERY,
       variables: params,
     }),
   }).then(async (resp) => {
