@@ -5,9 +5,10 @@ import { createConnection } from "typeorm";
 // Add response-time middleware to measure response timings
 import responseTime from "response-time";
 
-const implParamIndex = process.argv.indexOf("--impl");
+const index = process.argv.indexOf("--impl");
 const implementation =
-  implParamIndex > -1 ? process.argv[implParamIndex + 1] : "offset";
+  (index > -1 && process.argv.length >= index && process.argv[index + 1]) ||
+  "offset";
 
 console.log(`Starting with implementation '${implementation}'`);
 

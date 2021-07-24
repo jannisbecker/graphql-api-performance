@@ -24,9 +24,6 @@ export class Product {
   @Column()
   image_url!: string;
 
-  @ManyToMany(() => Category, {
-    eager: true,
-  })
   @ManyToMany(() => Category, (category) => category.products)
   @JoinTable()
   categories!: Category[];
