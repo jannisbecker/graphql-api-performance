@@ -19,11 +19,24 @@ async function getCategoriesForProductIds(
     .leftJoinAndSelect("category.products", "product")
     .where("product.id = ANY(:ids)", { ids: productIds })
     .getMany()
-    .then((results) =>
-      productIds.map((prodId) =>
-        results.filter((res) => res.products[0].id === prodId)
-      )
-    );
+    .then((results) => {
+      // Das Array aus Kategorien mit zugehörigen Produkten muss in ein Array aus Produkten mit zugehörigen Kategorien
+      // umgeformt werden. Hierzu wird ein Objekt gebaut, bei dem jeder Key eine productId darstellt, und jede Value ist ein leeres Array
+      const productCategories = productIds.reduce((obj, id) => {
+        obj[id] = [];
+        return obj;
+      }, {} as Record<number, Category[]>);
+
+      // Nun werden die Kategorien aus den results dem Objekt zugeordnet
+      results.forEach((category) => {
+        category.products.forEach((product) => {
+          productCategories[product.id].push(category);
+        });
+      });
+
+      // Und zurück in Array Form gebracht
+      return Object.values(productCategories);
+    });
 }
 
 export { categoryLoader };

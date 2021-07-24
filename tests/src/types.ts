@@ -1,8 +1,8 @@
 export enum Impl {
   OFFSET = "offset",
   CURSOR = "cursor-offset",
-  DATALOADER = "cursor-offset_dataloader",
-  CACHE = "cursor-offset_cache",
+  DATALOADER = "cursor-offset-dataloader",
+  CACHE = "cursor-offset-cache",
 }
 
 export type TestResults = number[][];
