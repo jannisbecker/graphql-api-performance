@@ -312,9 +312,23 @@ das heißt (noch nicht sicher..)
 
       => Visualisierung Linechart: avg Laufzeit (y Achse) über jede Seite, jew. eine Linie mit und ohne Caching
 
-    - Einfluss verschiedener Seitenlimits bei beiden Ansätzen
+    - Einfluss verschiedener Seitenlimits bei beiden Ansätzen (noch machen?)
 
 # Gespräch 21.7.
 
-- Last durch autocannon hinzufügen.
-- Bis Ende der Woche Tests und Dataloader implementiert haben
+- Last durch autocannon hinzufügen. x
+- Bis Ende der Woche Tests und Dataloader implementiert haben x
+
+# 28.7.
+
+- Nächste Themen:
+  - Dataloader Vorstellung, Querybatching, N+1 schwierig zu entdecken?
+  - Implementierung Dataloader
+  - Teststrategie und Aufbau
+  - Testergebnisse
+  - Evaluierung und Findings:
+    - Cursor Verfahren nicht viel effizienter als Offset, jedoch ein klein bisschen schneller und flexibler. Nicht verwunderlich da bei großen Seitensprüngen immer noch ebenso große Offsets verwendet werden.
+      Könnte aber Vorteile zeigen, sobald man sich inmitten der Datenbank bewegt, wo absolute Offsets grundsätzlich hohe Werte annehmen würden.
+    - Cursor Caching und Cursor Lookup verbessert Performance einiger großer Seitensprünge, in unterschiedlichen Szenarien. Ist vielleicht eher als Optimierung in bestimmten Anwendungen interessant, auch hier bei Verwendung großer Offsets in der Paginierung.
+      Kann aber auch allgemein als Lernerfahrung jeglicher Lookups in Daten verwendet werden, nicht nur Paginierung.
+    - Dataloader hat riesigen Einfluss auf Performance wenn N+1 Problem vorhanden, dabei erstaunlich leicht zu implementieren. Sehe ich grundsätzlich als Must Have an, da N+1 bei Verwendung von Dataloadern nicht mehr wirklich auftreten kann. Zusätzlich bietet der Dataloader einen integrierten Cache für jede optimierte Abfrage, es steigert die Performance nur zusätzlich. Für Situationen wo Dataloader nicht verwendet werden können, ließe sich das Problem aber auch durch Datencaches im Backend zum Großteil relativieren, da die N+1 Anfragen so zumindest nur infrequent auftreten. Dies konnte leider nicht mehr getestet werden.

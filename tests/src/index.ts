@@ -158,7 +158,6 @@ async function cursorTestRun() {
     }
 
     const req = await doCursorRequest(params);
-    console.log(req.response.data.products.edges?.length);
     runResults.push(req.time);
 
     previousPage = page;
