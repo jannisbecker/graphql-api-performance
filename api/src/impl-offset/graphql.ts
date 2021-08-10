@@ -33,8 +33,8 @@ const resolvers = {
     },
   },
   Product: {
-    categories(product: Product) {
-      return getCategoriesForProduct(product.id);
+    categories(parent: Product) {
+      return getCategoriesForProduct(parent.id);
     },
   },
 };

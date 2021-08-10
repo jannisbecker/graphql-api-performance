@@ -13,7 +13,7 @@ import range from "lodash.range";
 import { addPageToCache, clearCache } from "./cursor-cache";
 import { startAutocannon, stopAutocannon } from "./autocannon";
 
-export const TEST_PAGES = [1, 2, 10, 1000, 1001, 5, 1];
+export const TEST_PAGES = [1, 2, 10, 100, 1000, 1001, 1005, 5, 1];
 export const WARMUP_RUNS = 30;
 export const TEST_RUNS = 100;
 export const LIMIT = 30;
@@ -27,79 +27,6 @@ function logAverages(results: TestResults) {
     )
   );
 }
-
-(async () => {
-  buildBackend();
-
-  // console.log("> Test 1: Offset-basiertes Verfahren");
-  // {
-  //   await startBackend(Impl.OFFSET);
-  //   startAutocannon(false);
-
-  //   const results = await runTest(offsetTestRun);
-
-  //   stopAutocannon();
-  //   logAverages(results);
-  //   exportResults(results, "test1.csv");
-  // }
-
-  // console.log("> Test 2: Cursor-basiertes Verfahren");
-  // {
-  //   await startBackend(Impl.CURSOR);
-  //   startAutocannon(true);
-
-  //   const results = await runTest(cursorTestRun);
-
-  //   stopAutocannon();
-  //   logAverages(results);
-  //   exportResults(results, "test2.csv");
-  // }
-
-  // console.log(
-  //   "> Test 3: Einfluss des Cursor Cachings im Frontend (Cursor-basiertes Verfahren)"
-  // );
-  // {
-  //   await startBackend(Impl.CURSOR);
-  //   startAutocannon(true);
-
-  //   const results = await runTest(cursorCachingTestRun);
-
-  //   stopAutocannon();
-  //   logAverages(results);
-  //   exportResults(results, "test3.csv");
-  // }
-
-  // console.log(
-  //   "> Test 4: Einfluss des intelligenten Lookup Algorithmus beim Cursor Caching im Frontend (Cursor-basiertes Verfahren)"
-  // );
-  // {
-  //   await startBackend(Impl.CURSOR);
-  //   startAutocannon(true);
-
-  //   const results = await runTest(cursorCachingAlgorithmTestRun);
-
-  //   stopAutocannon();
-  //   logAverages(results);
-  //   exportResults(results, "test4.csv");
-  // }
-
-  console.log(
-    "> Test 5: Einfluss einer Dataloader Implementierung zur Lösung des N+1 Problems (Cursor-basiertes Verfahren)"
-  );
-  {
-    await startBackend(Impl.DATALOADER);
-    startAutocannon(true);
-
-    const results = await runTest(cursorTestRun);
-
-    stopAutocannon();
-    logAverages(results);
-    exportResults(results, "test5.csv");
-  }
-
-  await stopBackend();
-  console.log("Tests abgeschlossen");
-})();
 
 // Runs a single test using the given implementation function.
 // A single test implementation is first run for WARMUP_RUNS times without recording results,
@@ -118,6 +45,79 @@ async function runTest(singleRunImplementation: () => Promise<number[]>) {
 
   return testResults;
 }
+
+(async () => {
+  buildBackend();
+
+  console.log("> Test 1a: Offset-basiertes Verfahren");
+  {
+    await startBackend(Impl.OFFSET);
+    startAutocannon(false);
+
+    const results = await runTest(offsetTestRun);
+
+    stopAutocannon();
+    logAverages(results);
+    exportResults(results, "test1a.csv");
+  }
+
+  console.log("> Test 1b: Cursor-basiertes Verfahren");
+  {
+    await startBackend(Impl.CURSOR);
+    startAutocannon(true);
+
+    const results = await runTest(cursorTestRun);
+
+    stopAutocannon();
+    logAverages(results);
+    exportResults(results, "test1b.csv");
+  }
+
+  console.log(
+    "> Test 2: Einfluss des Cursor Cachings im Frontend (Cursor-basiertes Verfahren)"
+  );
+  {
+    await startBackend(Impl.CURSOR);
+    startAutocannon(true);
+
+    const results = await runTest(cursorCachingTestRun);
+
+    stopAutocannon();
+    logAverages(results);
+    exportResults(results, "test2.csv");
+  }
+
+  console.log(
+    "> Test 3: Einfluss des intelligenten Lookup Algorithmus beim Cursor Caching im Frontend (Cursor-basiertes Verfahren)"
+  );
+  {
+    await startBackend(Impl.CURSOR);
+    startAutocannon(true);
+
+    const results = await runTest(cursorCachingAlgorithmTestRun);
+
+    stopAutocannon();
+    logAverages(results);
+    exportResults(results, "test3.csv");
+  }
+
+  console.log(
+    "> Test 4: Einfluss einer Dataloader Implementierung zur Lösung des N+1 Problems (Cursor-basiertes Verfahren)"
+  );
+  {
+    await startBackend(Impl.DATALOADER);
+    startAutocannon(true);
+
+    const results = await runTest(cursorTestRun);
+
+    stopAutocannon();
+    logAverages(results);
+    exportResults(results, "test4.csv");
+  }
+
+  await stopBackend();
+  console.log("Tests abgeschlossen");
+})();
 
 /**
  * Test 1: Laufzeiten des Offset-basiertes Verfahren

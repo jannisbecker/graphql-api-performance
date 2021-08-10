@@ -4,6 +4,7 @@ import { Category } from "../model/Category";
 
 const categoriesRepository = getRepository(Category);
 
+// Definition des Dataloaders für die Auflösung der Kategorie-Relation
 const categoryLoader = new DataLoader<number, Category[]>((keys) =>
   getCategoriesForProductIds(keys)
 );
@@ -34,7 +35,7 @@ async function getCategoriesForProductIds(
         });
       });
 
-      // Und zurück in Array Form gebracht
+      // Und zurück in ein Array überführt
       return Object.values(productCategories);
     });
 }

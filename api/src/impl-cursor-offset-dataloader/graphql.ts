@@ -98,8 +98,8 @@ const resolvers = {
     },
   },
   Product: {
-    categories(product: Product) {
-      return categoryLoader.load(product.id);
+    categories(parent: Product) {
+      return categoryLoader.load(parent.id);
     },
   },
 };
