@@ -332,3 +332,11 @@ das heißt (noch nicht sicher..)
     - Cursor Caching und Cursor Lookup verbessert Performance einiger großer Seitensprünge, in unterschiedlichen Szenarien. Ist vielleicht eher als Optimierung in bestimmten Anwendungen interessant, auch hier bei Verwendung großer Offsets in der Paginierung.
       Kann aber auch allgemein als Lernerfahrung jeglicher Lookups in Daten verwendet werden, nicht nur Paginierung.
     - Dataloader hat riesigen Einfluss auf Performance wenn N+1 Problem vorhanden, dabei erstaunlich leicht zu implementieren. Sehe ich grundsätzlich als Must Have an, da N+1 bei Verwendung von Dataloadern nicht mehr wirklich auftreten kann. Zusätzlich bietet der Dataloader einen integrierten Cache für jede optimierte Abfrage, es steigert die Performance nur zusätzlich. Für Situationen wo Dataloader nicht verwendet werden können, ließe sich das Problem aber auch durch Datencaches im Backend zum Großteil relativieren, da die N+1 Anfragen so zumindest nur infrequent auftreten. Dies konnte leider nicht mehr getestet werden.
+
+# 10.8.
+
+TODO:
+
+- Teststrategie Änderungen
+  - letzte Test page auf 1001 ändern
+  - Beschreiben auf welchem System die Tests laufen, hardware, node version etc

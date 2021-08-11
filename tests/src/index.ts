@@ -13,7 +13,7 @@ import range from "lodash.range";
 import { addPageToCache, clearCache } from "./cursor-cache";
 import { startAutocannon, stopAutocannon } from "./autocannon";
 
-export const TEST_PAGES = [1, 2, 10, 100, 1000, 1001, 1005, 5, 1];
+export const TEST_PAGES = [1, 2, 10, 100, 1000, 1001, 1005, 5, 1001];
 export const WARMUP_RUNS = 30;
 export const TEST_RUNS = 100;
 export const LIMIT = 30;
