@@ -25,9 +25,9 @@ This will connect to the database and set up all tables.
 
 ### 1.4 Acquiring and importing the data
 
-Grab the electronics metadata file from http://deepyeti.ucsd.edu/jianmo/amazon/index.html (make sure to cite them if used scientifically). Then unzip the json file, rename it to `data.json` and move it to `/scripts/data/out`.
+Grab the electronics metadata file from http://deepyeti.ucsd.edu/jianmo/amazon/index.html (make sure to cite them if used scientifically). Then unzip the json file, rename it to `data.json` and move it to `/scripts/data/in`.
 
-Then open a terminal in `/scripts` and run `npm run data:prepare` to convert it to csv files.
+Then open a terminal in `/scripts` and run `npm run data:prepare` to convert it to csv files. You can find them in `/scripts/data/out` once the process is complete.
 
 Lastly, import those csv files into your database with a tool such as DataGrip. Make sure to have your import tool strip out the header row, as well as escape double quotes.
 
