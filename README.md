@@ -3,6 +3,8 @@
 This repo contains the practical part of my bachelors thesis,
 which is about optimizing performance of GraphQL APIs, targeting pagination algorithms and the N+1 problem.
 
+The complete set of test results acquired during the making of the thesis can be found in the `test-results.xlsx` file.
+
 ## 1. Setup
 
 ### 1.1 Prerequisites
@@ -23,7 +25,7 @@ This will connect to the database and set up all tables.
 
 ### 1.4 Acquiring and importing the data
 
-Grab the electronics metadata file from http://deepyeti.ucsd.edu/jianmo/amazon/index.html (make sure to cite them if used scientifically). Then unzip the json file, rename it to `data.json` and move it to /scripts/data/out.
+Grab the electronics metadata file from http://deepyeti.ucsd.edu/jianmo/amazon/index.html (make sure to cite them if used scientifically). Then unzip the json file, rename it to `data.json` and move it to `/scripts/data/out`.
 
 Then open a terminal in `/scripts` and run `npm run data:prepare` to convert it to csv files.
 
