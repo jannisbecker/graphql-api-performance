@@ -47,3 +47,5 @@ and use `npm run build` to build it, and then one of the following commands to s
 - `npm start -- --impl offset` to start the offset-based implementation
 - `npm start -- --impl cursor-offset` to start the cursor-based implementation with offset support
 - `npm start -- --impl cusror-offset-dataloader` to start the dataloader backed version of the cursor-based implementation
+
+You will then be able to test the API either with a tool such as postman/insomnia, or simply by accessing GraphiQL on http://localhost:3000/
